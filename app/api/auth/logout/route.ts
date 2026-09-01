@@ -1,0 +1,2 @@
+import { audit, currentUser, destroySession, sameOrigin } from "@/lib/auth";
+export async function POST(request:Request){if(!sameOrigin(request))return Response.json({error:"Invalid request."},{status:403});const user=await currentUser(request);const response=Response.json({ok:true});response.headers.set("Set-Cookie",await destroySession(request));if(user)await audit(user.id,"logout","user",user.id);return response;}

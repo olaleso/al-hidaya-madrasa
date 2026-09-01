@@ -1,0 +1,81 @@
+/* Mobile usability refinements: keep interactive controls comfortably thumb-sized. */
+@media (max-width: 950px) {
+  .public-menu {
+    width: 44px;
+    height: 44px;
+    padding: 10px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .public-links > a,
+  .public-links button {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  .public-links button {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 850px) {
+  .menu-button,
+  .icon-button,
+  .close-menu {
+    width: 44px;
+    height: 44px;
+    padding: 10px;
+    display: grid;
+    place-items: center;
+    flex: 0 0 44px;
+  }
+
+  .icon-button {
+    margin-left: 0;
+  }
+
+  .close-menu {
+    padding: 10px !important;
+  }
+}
+
+@media (max-width: 650px) {
+  .slide-dots {
+    bottom: 8px;
+    gap: 0;
+  }
+
+  .slide-dots button,
+  .slide-dots button.active {
+    width: 44px;
+    height: 44px;
+    background: transparent;
+    position: relative;
+  }
+
+  .slide-dots button::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 7px;
+    height: 7px;
+    transform: translate(-50%, -50%);
+    border-radius: 8px;
+    background: #ffffff88;
+    transition: 0.25s;
+  }
+
+  .slide-dots button.active::after {
+    width: 28px;
+    background: #dfae32;
+  }
+
+  .apply-close {
+    width: 44px;
+    height: 44px;
+  }
+}

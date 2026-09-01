@@ -1,0 +1,86 @@
+.modal-form-error {
+  margin: 0 0 16px;
+  padding: 12px 13px;
+  border: 1px solid #efc2bc;
+  border-radius: 9px;
+  background: #fff1ef;
+  color: #9b3027;
+  font-size: 11px;
+  line-height: 1.55;
+  font-weight: 750;
+}
+
+.modal input[aria-invalid="true"] {
+  border-color: #c94b40;
+  box-shadow: 0 0 0 3px #c94b4018;
+}
+
+.modal input[aria-invalid="true"]:focus {
+  border-color: #b83d33;
+  outline: 2px solid #c94b4033;
+}
+
+.modal-actions button:disabled {
+  opacity: .6;
+  cursor: wait;
+}
+
+.shared-feedback {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 11px 12px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  font-size: 11px;
+  line-height: 1.55;
+  font-weight: 700;
+}
+
+.shared-feedback svg {
+  width: 17px;
+  height: 17px;
+  flex: none;
+  margin-top: 1px;
+}
+
+.shared-feedback.error {
+  border-color: #efc2bc;
+  background: #fff1ef;
+  color: #9b3027;
+}
+
+.shared-feedback.success {
+  border-color: #bfe2cd;
+  background: #eaf7ef;
+  color: #216d49;
+}
+
+.modal > .shared-feedback {
+  margin-bottom: 16px;
+}
+
+.record-cards article > .shared-feedback {
+  margin-top: 11px;
+}
+
+.apply-modal .shared-feedback {
+  margin: 2px 0;
+}
+
+.auth-card .shared-feedback {
+  margin-top: -2px;
+}
+
+.action-hint {
+  margin: 9px 0 0 !important;
+  color: #8b650d !important;
+  font-size: 10px !important;
+  line-height: 1.5;
+}
+
+.modal select[aria-invalid="true"],
+.auth-card input[aria-invalid="true"] {
+  border-color: #c94b40;
+  box-shadow: 0 0 0 3px #c94b4018;
+}

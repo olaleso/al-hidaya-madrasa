@@ -1,0 +1,20 @@
+import { env } from "cloudflare:workers";
+import { requireUser } from "@/lib/auth";
+
+export async function GET(request:Request){
+ const auth=await requireUser(request);if("response" in auth)return auth.response;
+ if(auth.user.role==="parent"){
+  const row=await env.DB.prepare(`SELECT (SELECT COUNT(DISTINCT sg.student_id) FROM student_guardians sg JOIN guardians g ON g.id=sg.guardian_id WHERE g.user_id=?) AS children,(SELECT COALESCE(SUM(f.amount_due_pence-f.amount_paid_pence),0) FROM fee_accounts f JOIN student_guardians sg ON sg.student_id=f.student_id JOIN guardians g ON g.id=sg.guardian_id WHERE g.user_id=? AND f.status NOT IN ('paid','waived')) AS outstanding,(SELECT COUNT(*) FROM attendance a JOIN student_guardians sg ON sg.student_id=a.student_id JOIN guardians g ON g.id=sg.guardian_id WHERE g.user_id=? AND a.status IN ('present','late') AND date(a.attendance_date)>=date('now','-29 days')) AS attended,(SELECT COUNT(*) FROM announcements WHERE published_at IS NOT NULL AND audience IN ('all','parents') AND (expires_at IS NULL OR date(expires_at)>=date('now'))) AS announcements`).bind(auth.user.id,auth.user.id,auth.user.id).first<Record<string,number>>();
+  return Response.json({role:"parent",metrics:[{label:"My children",value:Number(row?.children||0),target:"Students"},{label:"Outstanding fees",value:Number(row?.outstanding||0),format:"money",target:"Fees"},{label:"Attendance marks",value:Number(row?.attended||0),target:"Attendance"},{label:"Announcements",value:Number(row?.announcements||0),target:"Announcements"}]});
+ }
+ if(auth.user.role==="finance"){
+  const row=await env.DB.prepare(`SELECT (SELECT COUNT(*) FROM students WHERE status='active') AS students,COALESCE(SUM(amount_due_pence),0) AS due,COALESCE(SUM(amount_paid_pence),0) AS paid,COALESCE(SUM(amount_due_pence-amount_paid_pence),0) AS outstanding FROM fee_accounts`).first<Record<string,number>>();
+  return Response.json({role:"finance",metrics:[{label:"Active students",value:Number(row?.students||0),target:"Students"},{label:"Fees raised",value:Number(row?.due||0),format:"money",target:"Fees"},{label:"Payments received",value:Number(row?.paid||0),format:"money",target:"Fees"},{label:"Outstanding",value:Number(row?.outstanding||0),format:"money",target:"Fees"}]});
+ }
+ if(auth.user.role==="teacher"){
+  const row=await env.DB.prepare(`SELECT (SELECT COUNT(*) FROM classes WHERE teacher_id=? AND active=1) AS classes,(SELECT COUNT(DISTINCT e.student_id) FROM enrolments e JOIN classes c ON c.id=e.class_id WHERE c.teacher_id=? AND e.status='active') AS students,(SELECT COUNT(*) FROM attendance a JOIN classes c ON c.id=a.class_id WHERE c.teacher_id=? AND a.attendance_date=date('now')) AS marked,(SELECT COUNT(*) FROM safeguarding_cases WHERE reported_by=? OR assigned_to=?) AS concerns`).bind(auth.user.id,auth.user.id,auth.user.id,auth.user.id,auth.user.id).first<Record<string,number>>();
+  return Response.json({role:"teacher",metrics:[{label:"My classes",value:Number(row?.classes||0),target:"Classes"},{label:"My pupils",value:Number(row?.students||0),target:"Students"},{label:"Marked today",value:Number(row?.marked||0),target:"Attendance"},{label:"My concerns",value:Number(row?.concerns||0),target:"Safeguarding"}]});
+ }
+ const [students,applications,classes,enrolments]=await Promise.all([env.DB.prepare(`SELECT COUNT(*) AS count FROM students WHERE status='active'`).first<{count:number}>(),env.DB.prepare(`SELECT COUNT(*) AS count FROM applications WHERE status IN ('new','reviewing','offered','waitlisted')`).first<{count:number}>(),env.DB.prepare(`SELECT COUNT(*) AS count FROM classes WHERE active=1`).first<{count:number}>(),env.DB.prepare(`SELECT COUNT(*) AS count FROM enrolments WHERE status='active'`).first<{count:number}>()]);
+ return Response.json({role:"admin",metrics:[{label:"Active students",value:Number(students?.count||0),target:"Students"},{label:"Open applications",value:Number(applications?.count||0),target:"Applications"},{label:"Active classes",value:Number(classes?.count||0),target:"Classes"},{label:"Active enrolments",value:Number(enrolments?.count||0),target:"Students"}]});
+}
