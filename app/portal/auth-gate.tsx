@@ -25,8 +25,11 @@ export default function AuthGate() {
   useEffect(() => {
     fetch("/api/auth/session", { credentials: "same-origin" })
       .then(async (response) => {
-        if (response.ok) setUser((await response.json()).user);
+        const text = await response.text();
+        const data = text ? JSON.parse(text) as {user?:PortalUser|null} : {};
+        if (response.ok && data.user) setUser(data.user);
       })
+      .catch(() => setUser(null))
       .finally(() => setLoading(false));
   }, []);
 
@@ -46,8 +49,10 @@ export default function AuthGate() {
           password: form.get("password"),
         }),
       });
-      const data = await response.json();
+      const text = await response.text();
+      const data = text ? JSON.parse(text) as {user?:PortalUser;error?:string} : {};
       if (!response.ok) throw new Error(data.error || "Unable to sign in.");
+      if (!data.user) throw new Error("The sign-in service returned an incomplete response.");
       setUser(data.user);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Unable to sign in.");
@@ -80,7 +85,7 @@ export default function AuthGate() {
 
   return (
     <main className="auth-page auth-page-simple">
-      <section className="auth-showcase" aria-label="Al-Hidaya Madrasat">
+      <section className="auth-showcase" aria-label="Al-Hidaya Madrasah">
         <div className="auth-showcase-inner">
           <img
             className="auth-showcase-logo"
@@ -89,7 +94,7 @@ export default function AuthGate() {
           />
           <span>Al-Hidaya Islamic Centre · Bolton</span>
           <h1>
-            Madrasat Management
+            Madrasah Management
             <br />
             System
           </h1>
@@ -106,7 +111,7 @@ export default function AuthGate() {
             ← Return to website
           </Link>
           <h2>Assalamu alaikum</h2>
-          <p>Sign in to your secure Madrasat workspace.</p>
+          <p>Sign in to your secure Madrasah workspace.</p>
 
           <form onSubmit={login} onChange={() => error && setError("")}>
             <label>
@@ -162,7 +167,7 @@ export default function AuthGate() {
           </p>
           <div className="auth-help">
             <span>Need help signing in?</span>
-            <a href="mailto:alhidayatulummaha@gmail.com">Contact the Madrasat</a>
+            <a href="mailto:alhidayatulummaha@gmail.com">Contact the Madrasah</a>
           </div>
         </div>
       </section>

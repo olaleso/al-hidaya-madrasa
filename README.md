@@ -1,6 +1,6 @@
 # vinext-starter
 
-The Madrasat portal uses email-and-password authentication with salted PBKDF2 password hashes and hashed, HTTP-only session tokens. See `LOCAL_SETUP.md` for the one-time administrator setup.
+The Madrasah portal uses email-and-password authentication with salted PBKDF2 password hashes and hashed, HTTP-only session tokens. See `LOCAL_SETUP.md` for the one-time administrator setup.
 
 Administrator, staff and parent accounts use the same responsive portal sign-in page. The authenticated account role determines which secured workspace and permissions are shown; users do not select or claim a role on the public login form.
 

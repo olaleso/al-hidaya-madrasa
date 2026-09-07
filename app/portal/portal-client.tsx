@@ -23,10 +23,10 @@ export default function Home({user,onLogout}:{user:PortalUser;onLogout:()=>Promi
     <main>
       <header><button className="menu-button" onClick={() => setMenu(true)} aria-label="Open menu"><Menu/></button><div className="search"><Search size={18}/><input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search students, guardians, classes…"/></div><button className="icon-button" aria-label="Notifications"><Bell size={20}/><i/></button><button className="help">Help & support</button></header>
       <div className="content">
-        <section className="welcome"><div><p>{date}</p><h1>{active === "Overview" ? `Assalamu alaikum, ${user.fullName.split(" ")[0]}` : active}</h1><span>{active === "Overview" ? "Here’s what is happening across Al-Hidaya Madrasat today." : `Manage Al-Hidaya Madrasat ${active.toLowerCase()} from one secure place.`}</span></div>{user.role==="admin"&&<button className="primary" onClick={() => setActive("Applications")}><FileText size={18}/>Review applications</button>}</section>
+        <section className="welcome"><div><p>{date}</p><h1>{active === "Overview" ? `Assalamu alaikum, ${user.fullName.split(" ")[0]}` : active}</h1><span>{active === "Overview" ? "Here’s what is happening across Al-Hidaya Madrasah today." : `Manage Al-Hidaya Madrasah ${active.toLowerCase()} from one secure place.`}</span></div>{user.role==="admin"&&<button className="primary" onClick={() => setActive("Applications")}><FileText size={18}/>Review applications</button>}</section>
         {active === "Overview" ? <OverviewView user={user} onNavigate={setActive}/> : <LiveRecords section={active} user={user} query={query} onLogout={onLogout}/>} 
       </div>
-      <footer><span>Al-Hidaya Islamic Centre · 66 Chorley Street, Bolton BL1 4AL</span><span>Designed and delivered by <strong>NuraSpecs</strong></span></footer>
+      <footer><span>Al-Hidaya Islamic Centre · 66 Chorley Street, Bolton BL1 4AL</span><span>Designed by <a className="nuraspecs-link" href="https://www.nuraspecs.com/" target="_blank" rel="noopener noreferrer">NuraSpecs</a></span></footer>
     </main>
   </div>;
 }

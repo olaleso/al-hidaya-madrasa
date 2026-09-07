@@ -1,7 +1,9 @@
 import { env } from "cloudflare:workers";
 
 const COOKIE = "ahm_session";
-const ITERATIONS = 210_000;
+// Cloudflare Workers currently supports PBKDF2 iteration counts up to 100,000.
+// Keep local and production credentials compatible with the same runtime.
+const ITERATIONS = 100_000;
 const SESSION_DAYS = 7;
 
 export type AuthUser = { id:string; email:string; fullName:string; role:"admin"|"teacher"|"finance"|"parent"; mustChangePassword:boolean };
@@ -44,6 +46,11 @@ export async function verifyPassword(password:string, expected:string, salt:stri
 
 export function validPassword(password:string) {
   return password.length >= 12 && /[a-z]/.test(password) && /[A-Z]/.test(password) && /\d/.test(password);
+}
+
+export function isLocalhostRequest(request:Request) {
+  const hostname = new URL(request.url).hostname.toLowerCase();
+  return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1";
 }
 
 function cookieValue(request:Request) {

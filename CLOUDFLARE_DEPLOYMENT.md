@@ -36,7 +36,7 @@ The repository is `https://github.com/olaleso/al-hidaya-madrasa.git`.
 ```powershell
 git init
 git add .
-git commit -m "Initial Al-Hidaya Madrasat production release"
+git commit -m "Initial Al-Hidaya Madrasah production release"
 git branch -M main
 git remote add origin https://github.com/olaleso/al-hidaya-madrasa.git
 git push -u origin main
@@ -70,7 +70,7 @@ In the deployed Worker's **Settings > Variables and Secrets**, add:
 - `ADMIN_SETUP_TOKEN` as a temporary encrypted secret for the first admin only
 
 `EMAIL_FROM` is optional because the application already defaults to
-`Al-Hidaya Madrasat <admissions@alhidayaislamiccentre.org>`.
+`Al-Hidaya Madrasah <admissions@alhidayaislamiccentre.org>`.
 
 Create the production administrator through `/api/auth/setup`, then delete
 `ADMIN_SETUP_TOKEN` and redeploy or restart the Worker. Never commit `.dev.vars`

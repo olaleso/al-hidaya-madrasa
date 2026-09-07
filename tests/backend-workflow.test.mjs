@@ -60,7 +60,7 @@ test("parent account links to one guardian and starts with forced password chang
  const db=new DatabaseSync(":memory:");db.exec("PRAGMA foreign_keys=ON");for(const file of migrations)applyMigration(db,file);
  db.prepare(`INSERT INTO guardians(id,full_name,email,phone) VALUES(?,?,?,?)`).run("guardian-1","Aisha Ali","aisha@example.test","07123456789");
  db.prepare(`INSERT INTO users(id,email,full_name,role,status) VALUES(?,?,?,'parent','active')`).run("parent-1","aisha@example.test","Aisha Ali");
- db.prepare(`INSERT INTO user_credentials(user_id,password_hash,password_salt,password_iterations,must_change_password) VALUES(?,?,?,?,1)`).run("parent-1","hash","salt",210000);
+ db.prepare(`INSERT INTO user_credentials(user_id,password_hash,password_salt,password_iterations,must_change_password) VALUES(?,?,?,?,1)`).run("parent-1","hash","salt",100000);
  db.prepare(`UPDATE guardians SET user_id=? WHERE id=? AND user_id IS NULL`).run("parent-1","guardian-1");
  const linked=db.prepare(`SELECT g.user_id AS userId,c.must_change_password AS mustChange FROM guardians g JOIN user_credentials c ON c.user_id=g.user_id WHERE g.id=?`).get("guardian-1");assert.deepEqual({...linked},{userId:"parent-1",mustChange:1});
 });
